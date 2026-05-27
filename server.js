@@ -9,9 +9,11 @@ const db = require('./database/db');
 //Rotas
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const caronaRoutes = require('./routes/caronaRoutes');
+const solicitacaoRoutes = require('./routes/solicitacaoRoutes');
 
 app.use('/usuarios', usuariosRoutes);
 app.use('/caronas', caronaRoutes);
+app.use('/solicitacoes', solicitacaoRoutes);
 
 //Rota inicial
 app.get('/', (req, res) => {

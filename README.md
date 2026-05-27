@@ -1,10 +1,10 @@
 # 🚗 Carona Universitária Inteligente
 
-API REST desenvolvida em Node.js para gerenciamento de caronas universitárias entre estudantes.
-
 ---
 
-## 📌 Sobre o Projeto
+# 📌 Sobre o Projeto
+
+API REST desenvolvida em Node.js para gerenciamento de caronas universitárias entre estudantes.
 
 O sistema permite que estudantes universitários ofereçam e encontrem caronas de forma prática e segura.
 
@@ -12,7 +12,7 @@ A API possui autenticação JWT, gerenciamento de usuários e CRUD completo de c
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+# 🚀 Tecnologias Utilizadas
 
 - Node.js
 - Express
@@ -23,7 +23,7 @@ A API possui autenticação JWT, gerenciamento de usuários e CRUD completo de c
 
 ---
 
-## 📂 Estrutura do Projeto
+# 📂 Estrutura do Projeto
 
 ```bash
 api-carona/
@@ -34,22 +34,24 @@ api-carona/
 ├── database/
 ├── models/
 ├── config/
-├── .env
+├── .gitignore
 ├── server.js
 └── package.json
 ```
 
 ---
 
-## 🔐 Funcionalidades
+# 🔐 Funcionalidades
 
-### 👤 Usuários
+## 👤 Usuários
+
 - Cadastro de usuários
 - Login autenticado
 - Senhas criptografadas com bcrypt
 - Geração de token JWT
 
-### 🚗 Caronas
+## 🚗 Caronas
+
 - Criar carona
 - Listar caronas
 - Buscar carona por ID
@@ -59,7 +61,7 @@ api-carona/
 
 ---
 
-## ⚙️ Instalação
+# ⚙️ Instalação
 
 Entre na pasta do projeto:
 
@@ -71,9 +73,11 @@ Instale as dependências:
 
 ```bash
 npm install
-``` 
+```
 
-## 🔑 Configuração do .env
+---
+
+# 🔑 Configuração do .env
 
 Crie um arquivo `.env` na raiz do projeto:
 
@@ -89,7 +93,7 @@ JWT_SECRET=sua_chave_secreta
 
 ---
 
-## ▶️ Executar Projeto
+# ▶️ Executar Projeto
 
 ```bash
 node server.js
@@ -103,9 +107,9 @@ npx nodemon server.js
 
 ---
 
-## 📡 Endpoints
+# 📡 Endpoints
 
-### 👤 Usuários
+## 👤 Usuários
 
 | Método | Rota | Descrição |
 |---|---|---|
@@ -114,7 +118,7 @@ npx nodemon server.js
 
 ---
 
-### 🚗 Caronas
+## 🚗 Caronas
 
 | Método | Rota | Descrição |
 |---|---|---|
@@ -126,7 +130,7 @@ npx nodemon server.js
 
 ---
 
-## 🔒 Autenticação
+# 🔒 Autenticação
 
 As rotas de caronas utilizam autenticação JWT.
 
@@ -138,7 +142,7 @@ Authorization: Bearer SEU_TOKEN
 
 ---
 
-## 📌 Futuras Melhorias
+# 📌 Futuras Melhorias
 
 - Solicitação de vagas
 - Aprovação de passageiros
@@ -149,6 +153,6 @@ Authorization: Bearer SEU_TOKEN
 
 ---
 
-## 👨‍💻 Desenvolvedor
+# 👨‍💻 Desenvolvedor
 
 Projeto desenvolvido por Alisson Sousa 🚀
