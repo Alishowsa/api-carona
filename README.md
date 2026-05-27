@@ -6,9 +6,11 @@
 
 API REST desenvolvida em Node.js para gerenciamento de caronas universitárias entre estudantes.
 
-O sistema permite que estudantes universitários ofereçam e encontrem caronas de forma prática e segura.
+O sistema permite que estudantes universitários ofereçam e encontrem caronas de forma prática, segura e organizada.
 
-A API possui autenticação JWT, gerenciamento de usuários e CRUD completo de caronas.
+A aplicação possui autenticação JWT, gerenciamento de usuários, CRUD completo de caronas e sistema de solicitações de vagas.
+
+O projeto está sendo desenvolvido com foco em arquitetura back-end, segurança, relacionamentos no banco de dados e regras reais de negócio.
 
 ---
 
@@ -49,6 +51,10 @@ api-carona/
 - Login autenticado
 - Senhas criptografadas com bcrypt
 - Geração de token JWT
+- Middleware de autenticação
+- Proteção de rotas privadas
+
+---
 
 ## 🚗 Caronas
 
@@ -58,6 +64,23 @@ api-carona/
 - Atualizar carona
 - Remover carona
 - Rotas protegidas com JWT
+- Associação da carona ao motorista logado
+- Apenas o dono pode editar/deletar sua carona
+
+---
+
+## 👥 Solicitações
+
+- Solicitar vaga em carona
+- Impedir solicitação duplicada
+- Impedir solicitar vaga na própria carona
+- Aceitar solicitação
+- Recusar solicitação
+- Controle automático de vagas disponíveis
+- Status da solicitação:
+  - pendente
+  - aceita
+  - recusada
 
 ---
 
@@ -107,6 +130,45 @@ npx nodemon server.js
 
 ---
 
+# 🧱 Estrutura do Banco de Dados
+
+## 👤 usuarios
+
+```sql
+id
+nome
+email
+senha
+```
+
+---
+
+## 🚗 caronas
+
+```sql
+id
+motorista_id
+origem
+destino
+horario
+vagas
+created_at
+```
+
+---
+
+## 👥 solicitacoes
+
+```sql
+id
+carona_id
+passageiro_id
+status
+created_at
+```
+
+---
+
 # 📡 Endpoints
 
 ## 👤 Usuários
@@ -123,16 +185,26 @@ npx nodemon server.js
 | Método | Rota | Descrição |
 |---|---|---|
 | GET | /caronas | Listar caronas |
-| GET | /caronas/:id | Buscar por ID |
+| GET | /caronas/:id | Buscar carona por ID |
 | POST | /caronas | Criar carona |
 | PUT | /caronas/:id | Atualizar carona |
-| DELETE | /caronas/:id | Deletar carona |
+| DELETE | /caronas/:id | Remover carona |
+
+---
+
+## 👥 Solicitações
+
+| Método | Rota | Descrição |
+|---|---|---|
+| POST | /solicitacoes/:carona_id | Solicitar vaga |
+| PUT | /solicitacoes/:id/aceitar | Aceitar solicitação |
+| PUT | /solicitacoes/:id/recusar | Recusar solicitação |
 
 ---
 
 # 🔒 Autenticação
 
-As rotas de caronas utilizam autenticação JWT.
+As rotas privadas utilizam autenticação JWT.
 
 Exemplo de header:
 
@@ -142,12 +214,38 @@ Authorization: Bearer SEU_TOKEN
 
 ---
 
+# 🧠 Fluxo do Sistema
+
+```txt
+Usuário cria conta
+↓
+Faz login
+↓
+Recebe token JWT
+↓
+Cria carona
+↓
+Outro usuário solicita vaga
+↓
+Solicitação fica pendente
+↓
+Motorista aceita ou recusa
+↓
+Sistema atualiza vagas automaticamente
+```
+
+---
+
 # 📌 Futuras Melhorias
 
-- Solicitação de vagas
-- Aprovação de passageiros
+- Integração com OpenStreetMap
+- Sistema de rotas e paradas
+- Geolocalização
 - Avaliação de usuários
-- Integração com mapas
+- Sistema de pagamentos
+- Histórico de viagens
+- Caronas recorrentes
+- Cálculo automático de distância
 - Front-end em React
 - Deploy na nuvem
 
@@ -155,4 +253,4 @@ Authorization: Bearer SEU_TOKEN
 
 # 👨‍💻 Desenvolvedor
 
-Projeto desenvolvido por Alisson Sousa 🚀
+ Alisson Sousa 🚀
