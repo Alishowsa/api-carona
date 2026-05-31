@@ -2,7 +2,7 @@ const db = require("../config/db");
 
 const Solicitacao = {
 
-  // CRIAR SOLICITAÇÃO
+  // criar solicitação
   create: (data, callback) => {
     const sql = `
       INSERT INTO solicitacoes (carona_id, passageiro_id)
@@ -12,7 +12,7 @@ const Solicitacao = {
     db.query(sql, [data.carona_id, data.passageiro_id], callback);
   },
 
-  // LISTAR SOLICITAÇÕES POR CARONA
+  // listar solicitações de uma carona
   findByCarona: (carona_id, callback) => {
     const sql = `
       SELECT 
@@ -41,7 +41,7 @@ const Solicitacao = {
     db.query(sql, [status, id], callback);
   },
 
-  // BUSCAR POR ID
+  // buscar solicitação por ID
   findById: (id, callback) => {
     const sql = `
       SELECT 

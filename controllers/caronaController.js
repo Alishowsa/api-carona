@@ -1,6 +1,6 @@
 const db = require('../database/db');
 
-// CREATE
+// criar carona 
 exports.criar = (req, res) => {
   const { origem, destino, horario, vagas } = req.body;
   const motorista_id = req.usuario.id; // vem do token JWT
@@ -23,8 +23,7 @@ exports.criar = (req, res) => {
     }
   );
 };
-
-// READ ALL
+// solicitar vaga 
 exports.listar = (req, res) => {
   db.query(
     `SELECT caronas.*, usuarios.nome AS motorista
@@ -39,7 +38,6 @@ exports.listar = (req, res) => {
   );
 };
 
-// READ BY ID
 exports.buscarPorId = (req, res) => {
   db.query(
     `SELECT caronas.*, usuarios.nome AS motorista
@@ -58,8 +56,7 @@ exports.buscarPorId = (req, res) => {
     }
   );
 };
-
-// UPDATE
+ 
 exports.atualizar = (req, res) => {
   const { origem, destino, horario, vagas } = req.body;
   const motorista_id = req.usuario.id;
@@ -94,7 +91,7 @@ exports.atualizar = (req, res) => {
   );
 };
 
-// DELETE
+// deletar carona só se for o motorista dono
 exports.deletar = (req, res) => {
   const motorista_id = req.usuario.id;
 

@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-// CADASTRO
+//cadastrar usuário
 exports.cadastrar = (req, res) => {
   const { nome, email, senha } = req.body;
 
@@ -18,7 +18,7 @@ exports.cadastrar = (req, res) => {
     [nome, email, senhaCriptografada],
     (err, result) => {
       if (err) {
-        // Email duplicado
+        // verificacao de email duplicado
         if (err.code === 'ER_DUP_ENTRY') {
           return res.status(409).json({ erro: 'E-mail já cadastrado' });
         }
@@ -33,7 +33,7 @@ exports.cadastrar = (req, res) => {
   );
 };
 
-// LOGIN
+// login de usuário
 exports.login = (req, res) => {
   const { email, senha } = req.body;
 

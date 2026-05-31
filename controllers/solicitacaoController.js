@@ -1,12 +1,12 @@
 const db = require('../database/db');
 
-// SOLICITAR VAGA
+// criar solicitação
 exports.solicitar = (req, res) => {
 
     const carona_id = req.params.carona_id;
     const passageiro_id = req.usuario.id;
 
-    // buscar carona
+    // buscar carona 
     db.query(
         'SELECT id, motorista_id, vagas FROM caronas WHERE id = ?',
         [carona_id],
@@ -80,12 +80,12 @@ exports.solicitar = (req, res) => {
     );
 };
 
-// ACEITAR SOLICITAÇÃO
+// aceitar solicitação
 exports.aceitar = (req, res) => {
 
     const id = req.params.id;
 
-    // 1. buscar solicitação
+    // buscar solicitação
     db.query(
         'SELECT * FROM solicitacoes WHERE id = ?',
         [id],
@@ -96,21 +96,23 @@ exports.aceitar = (req, res) => {
             }
 
             if (results.length === 0) {
-                return res.status(404).json({ erro: 'Solicitação não encontrada' });
+                return res.status(404).json({
+                    erro: 'Solicitação não encontrada'
+                });
             }
 
             const solicitacao = results[0];
 
-            // 2. evitar aceitar duas vezes
+            // evitar aceitar duas vezes
             if (solicitacao.status === 'aceita') {
                 return res.status(400).json({
                     erro: 'Essa solicitação já foi aceita'
                 });
             }
 
-            // 3. verificar vagas antes de aceitar
+            // buscar carona
             db.query(
-                'SELECT vagas FROM caronas WHERE id = ?',
+                'SELECT vagas, motorista_id FROM caronas WHERE id = ?',
                 [solicitacao.carona_id],
                 (err2, caronas) => {
 
@@ -124,28 +126,42 @@ exports.aceitar = (req, res) => {
                         });
                     }
 
+                    // apenas o motorista dono da carona pode aceitar
+                    if (caronas[0].motorista_id !== req.usuario.id) {
+                        return res.status(403).json({
+                            erro: 'Você não tem permissão para aceitar esta solicitação'
+                        });
+                    }
+
+                    // verificar vagas
                     if (caronas[0].vagas <= 0) {
                         return res.status(400).json({
                             erro: 'Não há vagas disponíveis nesta carona'
                         });
                     }
 
-                    // 4. aceitar solicitação
+                    // aceitar solicitação
                     db.query(
                         "UPDATE solicitacoes SET status = 'aceita' WHERE id = ?",
                         [id],
                         (err3) => {
+
                             if (err3) {
-                                return res.status(500).json({ erro: err3.message });
+                                return res.status(500).json({
+                                    erro: err3.message
+                                });
                             }
 
-                            // 5. diminuir vaga
+                            // diminuir vaga
                             db.query(
                                 "UPDATE caronas SET vagas = vagas - 1 WHERE id = ?",
                                 [solicitacao.carona_id],
                                 (err4) => {
+
                                     if (err4) {
-                                        return res.status(500).json({ erro: err4.message });
+                                        return res.status(500).json({
+                                            erro: err4.message
+                                        });
                                     }
 
                                     return res.json({
@@ -160,25 +176,167 @@ exports.aceitar = (req, res) => {
         }
     );
 };
-
-// RECUSAR SOLICITAÇÃO
+// recusar solicitação
 exports.recusar = (req, res) => {
 
     const id = req.params.id;
 
+    // buscar solicitação
     db.query(
-        "UPDATE solicitacoes SET status = 'recusada' WHERE id = ?",
+        'SELECT * FROM solicitacoes WHERE id = ?',
         [id],
-        (err) => {
+        (err, results) => {
 
             if (err) {
                 return res.status(500).json({ erro: err.message });
             }
 
-            return res.json({
-                mensagem: 'Solicitação recusada com sucesso'
-            });
+            if (results.length === 0) {
+                return res.status(404).json({
+                    erro: 'Solicitação não encontrada'
+                });
+            }
 
+            const solicitacao = results[0];
+
+            // buscar carona
+            db.query(
+                'SELECT motorista_id FROM caronas WHERE id = ?',
+                [solicitacao.carona_id],
+                (err2, caronas) => {
+
+                    if (err2) {
+                        return res.status(500).json({ erro: err2.message });
+                    }
+
+                    if (caronas.length === 0) {
+                        return res.status(404).json({
+                            erro: 'Carona não encontrada'
+                        });
+                    }
+
+                    // apenas o motorista dono da carona pode recusar
+                    if (caronas[0].motorista_id !== req.usuario.id) {
+                        return res.status(403).json({
+                            erro: 'Você não tem permissão para recusar esta solicitação'
+                        });
+                    }
+
+                    // recusar solicitação
+                    db.query(
+                        "UPDATE solicitacoes SET status = 'recusada' WHERE id = ?",
+                        [id],
+                        (err3) => {
+
+                            if (err3) {
+                                return res.status(500).json({
+                                    erro: err3.message
+                                });
+                            }
+
+                            return res.json({
+                                mensagem: 'Solicitação recusada com sucesso'
+                            });
+                        }
+                    );
+                }
+            );
+        }
+    );
+};
+// listar solicitações de uma carona
+ exports.listar = (req, res) => {
+
+  db.query(
+    `SELECT
+        s.id,
+        s.status,
+        u.nome,
+        u.email
+     FROM solicitacoes s
+     JOIN usuarios u
+        ON s.passageiro_id = u.id
+     WHERE s.carona_id = ?`,
+    [req.params.carona_id],
+    (err, results) => {
+
+      if (err) {
+        return res.status(500).json({ erro: err.message });
+      }
+
+      res.json(results);
+    }
+  );
+};
+// buscar solicitação por ID
+exports.buscarPorId = (req, res) => {
+
+  db.query(
+    'SELECT * FROM solicitacoes WHERE id = ?',
+    [req.params.id],
+    (err, results) => {
+
+      if (err) {
+        return res.status(500).json({ erro: err.message });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({
+          erro: 'Solicitação não encontrada'
+        });
+      }
+
+      res.json(results[0]);
+    }
+  );
+};
+// cancelar solicitação
+exports.cancelar = (req, res) => {
+
+    const id = req.params.id;
+
+    // buscar solicitação
+    db.query(
+        'SELECT * FROM solicitacoes WHERE id = ?',
+        [id],
+        (err, results) => {
+
+            if (err) {
+                return res.status(500).json({ erro: err.message });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({
+                    erro: 'Solicitação não encontrada'
+                });
+            }
+
+            const solicitacao = results[0];
+
+            // apenas quem criou pode cancelar
+            if (solicitacao.passageiro_id !== req.usuario.id) {
+                return res.status(403).json({
+                    erro: 'Você não tem permissão para cancelar esta solicitação'
+                });
+            }
+
+            // excluir solicitação
+            db.query(
+                'DELETE FROM solicitacoes WHERE id = ?',
+                [id],
+                (err2) => {
+
+                    if (err2) {
+                        return res.status(500).json({
+                            erro: err2.message
+                        });
+                    }
+
+                    return res.json({
+                        mensagem: 'Solicitação cancelada com sucesso'
+                    });
+                }
+            );
         }
     );
 };
