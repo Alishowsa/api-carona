@@ -3,7 +3,8 @@ const router = express.Router();
 
 const controller = require('../controllers/solicitacaoController');
 const auth = require('../middlewares/auth');
-
+//listagem de solicitações
+router.get('/minhas', auth, controller.minhasSolicitacoes);
 // criar solicitação
 router.post('/:carona_id', auth, controller.solicitar);
 

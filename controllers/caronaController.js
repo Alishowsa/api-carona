@@ -37,6 +37,24 @@ exports.listar = (req, res) => {
     }
   );
 };
+exports.minhasCaronas = (req, res) => {
+  const motorista_id = req.usuario.id;
+
+  db.query(
+    `SELECT *
+     FROM caronas
+     WHERE motorista_id = ?
+     ORDER BY horario ASC`,
+    [motorista_id],
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ erro: err.message });
+      }
+
+      res.json(results);
+    }
+  );
+};
 
 exports.buscarPorId = (req, res) => {
   db.query(

@@ -103,11 +103,11 @@ exports.aceitar = (req, res) => {
 
             const solicitacao = results[0];
 
-            // evitar aceitar duas vezes
-            if (solicitacao.status === 'aceita') {
+             // só pode aceitar se estiver pendente
+            if (solicitacao.status !== 'pendente') {
                 return res.status(400).json({
-                    erro: 'Essa solicitação já foi aceita'
-                });
+                     erro: `Solicitação já está ${solicitacao.status}`
+             });
             }
 
             // buscar carona
@@ -198,6 +198,13 @@ exports.recusar = (req, res) => {
             }
 
             const solicitacao = results[0];
+            
+            // só pode recusar se estiver pendente
+            if (solicitacao.status !== 'pendente') {
+                return res.status(400).json({
+                     erro: `Solicitação já está ${solicitacao.status}`
+                 });
+            }
 
             // buscar carona
             db.query(
@@ -337,6 +344,37 @@ exports.cancelar = (req, res) => {
                     });
                 }
             );
+        }
+    );
+};
+// listar minhas solicitações
+exports.minhasSolicitacoes = (req, res) => {
+
+    const passageiro_id = req.usuario.id;
+
+    db.query(
+        `SELECT
+            s.id,
+            s.status,
+            c.id AS carona_id,
+            c.origem,
+            c.destino,
+            c.horario
+        FROM solicitacoes s
+        JOIN caronas c
+            ON s.carona_id = c.id
+        WHERE s.passageiro_id = ?
+        ORDER BY s.id DESC`,
+        [passageiro_id],
+        (err, results) => {
+
+            if (err) {
+                return res.status(500).json({
+                    erro: err.message
+                });
+            }
+
+            res.json(results);
         }
     );
 };
